@@ -81,4 +81,4 @@ A comprehensive, full-stack placement management system designed specifically fo
 * `instance/placement.db` – The relational SQLite database.
 
 ## 📜 License
-This project was built for the IITM BS Degree S-Grade Evaluation. All rights reserved.
+This project was built for the IITM BS Degree. All rights reserved.
