@@ -1,0 +1,396 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 border-l-4 border-portal-blue pl-4">Student Dashboard</h1>
+      <p class="text-gray-500 mt-2 pl-5 text-sm">Find your dream job and track your applications.</p>
+    </div>
+
+    <div class="flex gap-3">
+      <a href="{{ url_for('student_applications') }}"
+        class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors shadow-sm flex items-center">
+        <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+          </path>
+        </svg>
+        My Applications
+      </a>
+      <a href="{{ url_for('student_profile') }}"
+        class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors shadow-sm flex items-center">
+        <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+          </path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z">
+          </path>
+        </svg>
+        Edit Profile
+      </a>
+    </div>
+  </div>
+
+  <!-- Status Alert -->
+  {% if current_user.final_offer_drive_id %}
+  <div class="mb-8 bg-green-50 rounded-2xl border border-green-200 p-6 flex items-start gap-4 shadow-sm">
+    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+      <span class="text-2xl">🎉</span>
+    </div>
+    <div>
+      <h3 class="text-lg font-bold text-green-800">Congratulations! You've been placed!</h3>
+      <p class="text-green-700 mt-1">You have secured an offer from <span class="font-bold">{{
+          current_user.final_offer_drive.company.full_name }}</span> for the role of <span class="font-bold">{{
+          current_user.final_offer_drive.job_title }}</span>.</p>
+    </div>
+  </div>
+  {% else %}
+  <div class="mb-8 bg-blue-50 rounded-2xl border border-blue-100 p-4 flex items-center justify-between gap-3 flex-wrap">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 text-portal-blue">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <p class="text-blue-800 font-medium">Status: <span class="font-bold">Actively Looking</span></p>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Layout Grid: Filters (Left) + Results (Right) -->
+  <div class="flex flex-col lg:flex-row gap-8">
+
+    <!-- Left Sidebar: Filters -->
+    <div class="w-full lg:w-1/4">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-gray-900 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-portal-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+              </path>
+            </svg>
+            Filters
+          </h2>
+          <a href="{{ url_for('student_dashboard') }}"
+            class="text-xs font-bold text-gray-500 hover:text-portal-blue">Clear All</a>
+        </div>
+
+        <form method="get" action="{{ url_for('student_dashboard') }}" class="space-y-6">
+
+          <!-- Sector Filter -->
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">Company Sector</label>
+            <select name="company_sector"
+              class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-portal-blue focus:border-portal-blue sm:text-sm bg-gray-50">
+              <option value="All" {% if request.args.get('company_sector')=='All' %}selected{% endif %}>All Sectors
+              </option>
+              <option value="IT" {% if request.args.get('company_sector')=='IT' %}selected{% endif %}>Information
+                Technology</option>
+              <option value="Finance" {% if request.args.get('company_sector')=='Finance' %}selected{% endif %}>Finance
+                / FinTech</option>
+              <option value="Consulting" {% if request.args.get('company_sector')=='Consulting' %}selected{% endif %}>
+                Consulting</option>
+              <option value="Core Engineering" {% if request.args.get('company_sector')=='Core Engineering' %}selected{%
+                endif %}>Core Engineering</option>
+            </select>
+          </div>
+
+          <!-- Location Filter -->
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">Location</label>
+            <select name="location"
+              class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-portal-blue focus:border-portal-blue sm:text-sm bg-gray-50">
+              <option value="All" {% if request.args.get('location')=='All' %}selected{% endif %}>All Locations</option>
+              <option value="Bangalore" {% if request.args.get('location')=='Bangalore' %}selected{% endif %}>Bangalore
+              </option>
+              <option value="Pune" {% if request.args.get('location')=='Pune' %}selected{% endif %}>Pune</option>
+              <option value="Mumbai" {% if request.args.get('location')=='Mumbai' %}selected{% endif %}>Mumbai</option>
+              <option value="Delhi NCR" {% if request.args.get('location')=='Delhi NCR' %}selected{% endif %}>Delhi NCR
+              </option>
+              <option value="Remote" {% if request.args.get('location')=='Remote' %}selected{% endif %}>Remote</option>
+            </select>
+          </div>
+
+          <!-- Job Type Filter -->
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">Job Type</label>
+            <select name="job_type"
+              class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-portal-blue focus:border-portal-blue sm:text-sm bg-gray-50">
+              <option value="All" {% if request.args.get('job_type')=='All' %}selected{% endif %}>All Types</option>
+              <option value="Full-time" {% if request.args.get('job_type')=='Full-time' %}selected{% endif %}>Full-time
+              </option>
+              <option value="Internship" {% if request.args.get('job_type')=='Internship' %}selected{% endif %}>
+                Internship</option>
+            </select>
+          </div>
+
+          <!-- Salary Filter -->
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2 flex justify-between">
+              Minimum Salary (LPA)
+            </label>
+            <div class="flex items-center gap-2">
+              <input type="range" name="min_salary" min="0" max="50" step="5"
+                value="{{ request.args.get('min_salary', '0') }}"
+                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                oninput="document.getElementById('sal-val').innerText = this.value + ' LPA'">
+              <span id="sal-val" class="text-sm font-bold text-portal-blue w-14 text-right">{{
+                request.args.get('min_salary', '0') }} LPA</span>
+            </div>
+          </div>
+
+          <!-- Sort Options -->
+          <div class="pt-4 border-t border-gray-100">
+            <label class="block text-sm font-bold text-gray-700 mb-2">Sort By</label>
+            <select name="sort_by"
+              class="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-portal-blue focus:border-portal-blue sm:text-sm bg-gray-50">
+              <option value="deadline_asc" {% if request.args.get('sort_by')=='deadline_asc' %}selected{% endif %}>
+                Deadline (Ending Soon)</option>
+              <option value="salary_desc" {% if request.args.get('sort_by')=='salary_desc' %}selected{% endif %}>Salary
+                (High to Low)</option>
+            </select>
+          </div>
+
+          <!-- Apply Button -->
+          <button type="submit"
+            class="w-full mt-4 bg-portal-blue text-white py-3 rounded-xl font-bold shadow-md hover:bg-blue-800 transition-colors">
+            Apply Filters
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right Side: Drive Results Grid -->
+    <div class="w-full lg:w-3/4">
+      <div class="mb-6 flex items-center justify-between">
+        <h2 class="text-xl font-bold text-gray-900">Available Drives</h2>
+        <div class="flex items-center gap-4">
+          <span class="bg-gray-100 text-gray-600 text-xs font-bold px-3 py-1 rounded-full border border-gray-200">{{
+            pagination.total }} Matches found</span>
+
+          <!-- View Toggle -->
+          <div
+            class="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hidden sm:flex">
+            <button onclick="setLayout('grid')" id="btn-grid" type="button"
+              class="p-2 bg-gray-50 text-portal-blue hover:bg-gray-100 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                </path>
+              </svg>
+            </button>
+            <button onclick="setLayout('list')" id="btn-list" type="button"
+              class="p-2 bg-white text-gray-400 hover:bg-gray-50 transition-colors border-l border-gray-200">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
+                </path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {% if drives %}
+      <div id="drives-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for d in drives %}
+        <div
+          class="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col group hover:-translate-y-1">
+          <div class="p-6 flex-grow">
+            <div class="flex items-start justify-between mb-4">
+              <div
+                class="w-12 h-12 bg-gradient-to-br from-portal-blue to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md">
+                {{ d.company.full_name[0] | upper }}
+              </div>
+
+              <!-- Match Badge / Status -->
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-100">
+                Eligible
+              </span>
+            </div>
+
+            <h3 class="text-lg font-bold text-gray-900 group-hover:text-portal-blue transition-colors">{{ d.job_title }}
+            </h3>
+            <p class="text-sm font-medium text-gray-500 mb-4">{{ d.company.full_name }} <span class="mx-1">•</span> {{
+              d.company.sector or 'General' }}</p>
+
+            <div class="flex flex-wrap gap-2 mb-4">
+              {% if d.location %}
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                {{ d.location }}
+              </span>
+              {% endif %}
+
+              {% if d.job_type %}
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                  </path>
+                </svg>
+                {{ d.job_type }}
+              </span>
+              {% endif %}
+            </div>
+
+            <div class="space-y-2 mt-auto">
+              <!-- Salary -->
+              <div class="flex items-center text-sm text-gray-600">
+                <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                  </path>
+                </svg>
+                <span class="font-bold text-gray-900">₹{{ d.salary }} LPA</span>
+              </div>
+
+              <!-- Deadline -->
+              <div class="flex items-center text-sm text-gray-600">
+                <svg class="w-4 h-4 mr-2 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Deadline: <span class="font-bold text-gray-900 ml-1">{{ d.deadline.strftime('%d %b %Y') if d.deadline
+                  else 'Not specified' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 bg-gray-50 border-t border-gray-100">
+            <a href="{{ url_for('student_view_drive', drive_id=d.id) }}"
+              class="block w-full text-center px-4 py-2.5 bg-portal-blue text-white rounded-lg hover:bg-blue-800 transition-colors text-sm font-bold shadow-sm">
+              View Details & Apply
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Pagination Controls -->
+      {% if pagination.pages > 1 %}
+      <div class="mt-10 flex justify-center">
+        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+
+          {% if pagination.has_prev %}
+          <a href="{{ url_for('student_dashboard', page=pagination.prev_num, 
+                     min_salary=request.args.get('min_salary'), location=request.args.get('location'), 
+                     job_type=request.args.get('job_type'), company_sector=request.args.get('company_sector'), 
+                     sort_by=request.args.get('sort_by')) }}"
+            class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+            <span class="sr-only">Previous</span>
+            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+              aria-hidden="true">
+              <path fill-rule="evenodd"
+                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                clip-rule="evenodd" />
+            </svg>
+          </a>
+          {% endif %}
+
+          {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+          {% if p %}
+          {% if p == pagination.page %}
+          <span
+            class="relative inline-flex items-center px-4 py-2 border border-portal-blue bg-blue-50 text-sm font-medium text-portal-blue">{{
+            p }}</span>
+          {% else %}
+          <a href="{{ url_for('student_dashboard', page=p, 
+                           min_salary=request.args.get('min_salary'), location=request.args.get('location'), 
+                           job_type=request.args.get('job_type'), company_sector=request.args.get('company_sector'), 
+                           sort_by=request.args.get('sort_by')) }}"
+            class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">{{
+            p }}</a>
+          {% endif %}
+          {% else %}
+          <span
+            class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">...</span>
+          {% endif %}
+          {% endfor %}
+
+          {% if pagination.has_next %}
+          <a href="{{ url_for('student_dashboard', page=pagination.next_num, 
+                     min_salary=request.args.get('min_salary'), location=request.args.get('location'), 
+                     job_type=request.args.get('job_type'), company_sector=request.args.get('company_sector'), 
+                     sort_by=request.args.get('sort_by')) }}"
+            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+            <span class="sr-only">Next</span>
+            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+              aria-hidden="true">
+              <path fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd" />
+            </svg>
+          </a>
+          {% endif %}
+
+        </nav>
+      </div>
+      {% endif %}
+
+      {% else %}
+      <div
+        class="bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 p-12 flex flex-col items-center justify-center text-center mt-6">
+        <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+          <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+            </path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-gray-900 mb-2">No Drives Match Your Filters</h3>
+        <p class="text-gray-500 max-w-sm mb-6">Try adjusting your search criteria or clearing all filters to see more
+          opportunities.</p>
+        <a href="{{ url_for('student_dashboard') }}"
+          class="px-6 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-bold text-sm shadow-sm transition-colors">Clear
+          Filters</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  function setLayout(type) {
+    const container = document.getElementById('drives-container');
+    const btnGrid = document.getElementById('btn-grid');
+    const btnList = document.getElementById('btn-list');
+
+    if (!container) return; // if zero matches, container doesn't exist
+
+    if (type === 'list') {
+      // Switch to List Layout
+      container.classList.remove('md:grid-cols-2', 'grid');
+      container.classList.add('flex', 'flex-col');
+
+      // Update Toggle Buttons Styles
+      btnList.classList.remove('bg-white', 'text-gray-400');
+      btnList.classList.add('bg-gray-50', 'text-portal-blue');
+
+      btnGrid.classList.remove('bg-gray-50', 'text-portal-blue');
+      btnGrid.classList.add('bg-white', 'text-gray-400');
+    } else {
+      // Switch to Grid Layout
+      container.classList.add('md:grid-cols-2', 'grid');
+      container.classList.remove('flex', 'flex-col');
+
+      // Update Toggle Buttons Styles
+      btnGrid.classList.remove('bg-white', 'text-gray-400');
+      btnGrid.classList.add('bg-gray-50', 'text-portal-blue');
+
+      btnList.classList.remove('bg-gray-50', 'text-portal-blue');
+      btnList.classList.add('bg-white', 'text-gray-400');
+    }
+  }
+</script>
+{% endblock %}

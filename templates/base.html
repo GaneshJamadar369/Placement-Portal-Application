@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Placement Portal{% endblock %}</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'portal-blue': '#1e40af',
+            'portal-green': '#059669',
+            'portal-warning': '#d97706'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- AOS for animations -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>AOS.init();</script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-lg fixed w-full z-50 top-0">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between items-center py-4">
+        <!-- Logo -->
+        <div class="flex items-center space-x-2">
+          <div
+            class="w-10 h-10 bg-gradient-to-r from-portal-blue to-portal-green rounded-xl flex items-center justify-center">
+            <span class="text-white font-bold text-lg">P</span>
+          </div>
+          <span class="font-bold text-xl text-portal-blue">Placement Portal</span>
+        </div>
+
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex space-x-6">
+          <a href="{{ url_for('home') }}" class="text-gray-600 hover:text-portal-blue font-medium">Home</a>
+          <a href="{{ url_for('student_dashboard') }}"
+            class="text-gray-600 hover:text-portal-blue font-medium">Students</a>
+          <a href="{{ url_for('company_dashboard') }}"
+            class="text-gray-600 hover:text-portal-blue font-medium">Companies</a>
+          <a href="{{ url_for('admin_dashboard') }}" class="text-gray-600 hover:text-portal-blue font-medium">Admin</a>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div class="hidden md:flex space-x-4 items-center">
+          {% if current_user.is_authenticated %}
+
+          <!-- Notifications Bell -->
+          <a href="{{ url_for('view_notifications') }}"
+            class="relative p-2 text-gray-500 hover:text-portal-blue transition-colors rounded-full hover:bg-gray-50">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+              </path>
+            </svg>
+            {% set unread_count = current_user.notifications.filter_by(is_read=False).count() if
+            current_user.notifications else 0 %}
+            {% if unread_count > 0 %}
+            <span
+              class="absolute top-1 right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform bg-red-500 rounded-full border-2 border-white">{{
+              unread_count }}</span>
+            {% endif %}
+          </a>
+
+          <div class="flex items-center space-x-3 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 ml-2">
+            <div
+              class="w-7 h-7 bg-portal-blue text-white rounded-full flex items-center justify-center text-sm font-bold">
+              {{ current_user.full_name[0] | upper }}
+            </div>
+            <span class="text-sm font-medium text-portal-blue hidden lg:block">{{ current_user.full_name }}</span>
+          </div>
+          <a href="{{ url_for('logout') }}"
+            class="px-4 py-1.5 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 hover:border-red-300 transition-all font-medium text-sm">Logout</a>
+          {% else %}
+          <a href="{{ url_for('login') }}"
+            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all font-medium">Login</a>
+          <a href="{{ url_for('register_select') }}"
+            class="px-5 py-2 bg-portal-blue text-white rounded-lg hover:bg-portal-blue/90 transition-all font-medium shadow-sm">Get
+            Started</a>
+          {% endif %}
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-1">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for category, message in messages %}
+  <div
+    class="fixed top-24 right-4 z-40 w-96 p-4 rounded-lg shadow-xl bg-white border-l-4 
+                    {% if category == 'success' %}border-portal-green{% elif category == 'error' %}border-red-500{% else %}border-portal-warning{% endif %}">
+    {{ message }}
+    <button onclick="this.parentElement.remove()" class="float-right text-gray-500 hover:text-gray-700">×</button>
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+  <!-- Main Content -->
+  <main class="pt-20">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-r from-portal-blue to-portal-green text-white py-12 mt-20">
+    <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-3 gap-8">
+      <div>
+        <h3 class="text-xl font-bold mb-4">Placement Portal</h3>
+        <p class="text-blue-100">Centralized campus recruitment management system for students, companies, and
+          administrators.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-4">Quick Links</h4>
+        <ul class="space-y-2 text-blue-100">
+          <li><a href="{{ url_for('student_dashboard') }}">Student Portal</a></li>
+          <li><a href="{{ url_for('company_dashboard') }}">Company Portal</a></li>
+          <li><a href="{{ url_for('admin_dashboard') }}">Admin Portal</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold mb-4">Contact</h4>
+        <p class="text-blue-100">support@placementportal.com</p>
+        <p class="text-blue-100">+91 98765 43210</p>
+      </div>
+    </div>
+    <div class="border-t border-blue-800 mt-8 pt-8 text-center text-blue-200">
+      © 2026 Placement Portal. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-btn').onclick = () => {
+      const nav = document.querySelector('nav .flex.justify-between');
+      nav.classList.toggle('flex-col');
+    }
+  </script>
+  <script>AOS.init();</script>
+</body>
+
+</html>

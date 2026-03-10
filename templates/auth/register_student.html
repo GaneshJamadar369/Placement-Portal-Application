@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-8">
+    <div>
+      <h3 class="mt-2 text-center text-3xl font-extrabold text-gray-900">Student Registration</h3>
+      <p class="mt-2 text-center text-sm text-gray-600">
+        Create an account to start applying to companies.
+      </p>
+    </div>
+
+    <form class="mt-8 space-y-5" method="post">
+      {{ form.hidden_tag() }}
+
+      <div class="space-y-4">
+        <div>
+          {{ form.full_name.label(class="block text-sm font-medium text-gray-700") }}
+          <div class="mt-1">
+            {{ form.full_name(class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm
+            placeholder-gray-400 focus:outline-none focus:ring-portal-green focus:border-portal-green sm:text-sm
+            transition duration-150 ease-in-out") }}
+          </div>
+        </div>
+
+        <div>
+          {{ form.email.label(class="block text-sm font-medium text-gray-700") }}
+          <div class="mt-1">
+            {{ form.email(class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm
+            placeholder-gray-400 focus:outline-none focus:ring-portal-green focus:border-portal-green sm:text-sm
+            transition duration-150 ease-in-out") }}
+          </div>
+        </div>
+
+        <div>
+          {{ form.roll_number.label(class="block text-sm font-medium text-gray-700") }}
+          <div class="mt-1">
+            {{ form.roll_number(class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg
+            shadow-sm placeholder-gray-400 focus:outline-none focus:ring-portal-green focus:border-portal-green
+            sm:text-sm transition duration-150 ease-in-out") }}
+          </div>
+        </div>
+
+        <div>
+          {{ form.branch.label(class="block text-sm font-medium text-gray-700") }}
+          <div class="mt-1">
+            {{ form.branch(class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm
+            placeholder-gray-400 focus:outline-none focus:ring-portal-green focus:border-portal-green sm:text-sm
+            transition duration-150 ease-in-out") }}
+          </div>
+        </div>
+
+        <div>
+          {{ form.cgpa.label(class="block text-sm font-medium text-gray-700") }}
+          <div class="mt-1">
+            {{ form.cgpa(class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm
+            placeholder-gray-400 focus:outline-none focus:ring-portal-green focus:border-portal-green sm:text-sm
+            transition duration-150 ease-in-out") }}
+          </div>
+        </div>
+
+        <div>
+          {{ form.password.label(class="block text-sm font-medium text-gray-700") }}
+          <div class="mt-1">
+            {{ form.password(class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm
+            placeholder-gray-400 focus:outline-none focus:ring-portal-green focus:border-portal-green sm:text-sm
+            transition duration-150 ease-in-out") }}
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-2 flex flex-col space-y-3">
+        {{ form.submit(class="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm
+        font-bold rounded-lg text-white bg-portal-green hover:bg-green-700 focus:outline-none focus:ring-2
+        focus:ring-offset-2 focus:ring-portal-green transition duration-150 ease-in-out cursor-pointer shadow-md") }}
+        <a href="{{ url_for('login') }}"
+          class="w-full flex justify-center py-2.5 px-4 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-portal-blue transition duration-150 shadow-sm text-center">Back
+          to Login</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

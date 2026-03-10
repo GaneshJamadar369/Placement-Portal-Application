@@ -1,0 +1,419 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 print:py-0 print:px-0">
+
+    <!-- Action Header -->
+    <div class="flex items-center justify-between mb-8 print:hidden">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 border-l-4 border-portal-blue pl-4">Analytics Dashboard</h1>
+            <p class="text-gray-500 mt-2 pl-5 text-sm">Comprehensive overview of placement statistics and platform
+                activity.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{{ url_for('admin_export_csv') }}" target="_blank"
+                class="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-colors shadow-sm flex items-center text-sm">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
+                Export CSV
+            </a>
+            <button onclick="window.print()"
+                class="px-4 py-2 bg-portal-blue text-white font-bold rounded-xl hover:bg-blue-800 transition-colors shadow-sm flex items-center text-sm">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                    </path>
+                </svg>
+                Export PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- Print Header Only -->
+    <div class="hidden print:block mb-8 text-center border-b-2 border-gray-900 pb-4">
+        <h1 class="text-4xl font-black text-gray-900 mb-2">Placement Analytics Report</h1>
+        <p class="text-gray-600 font-medium">Generated automatically from the Admin Portal</p>
+    </div>
+
+    <!-- Primary KPIs -->
+    <h2 class="text-lg font-bold text-gray-900 mb-4 print:text-xl hidden print:block">Key Performance Indicators</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+
+        <!-- Total Placements -->
+        <div
+            class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 flex flex-col items-center text-center print:border-gray-300 print:shadow-none">
+            <div
+                class="w-12 h-12 bg-green-100 text-portal-green rounded-full flex items-center justify-center mb-4 print:bg-white print:border print:border-green-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 14l9-5-9-5-9 5 9 5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                    </path>
+                    <path
+                        d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+            </div>
+            <h5 class="text-gray-500 text-sm font-bold mb-1 uppercase tracking-wider">Total Placed</h5>
+            <p class="text-4xl font-black text-gray-900">{{ total_placements }}</p>
+        </div>
+
+        <!-- Placement Rate -->
+        <div
+            class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 flex flex-col items-center text-center print:border-gray-300 print:shadow-none">
+            <div
+                class="w-12 h-12 bg-blue-100 text-portal-blue rounded-full flex items-center justify-center mb-4 print:bg-white print:border print:border-blue-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
+            </div>
+            <h5 class="text-gray-500 text-sm font-bold mb-1 uppercase tracking-wider">Placement Rate</h5>
+            <p class="text-4xl font-black text-portal-blue">{{ placement_rate }}%</p>
+        </div>
+
+        <!-- Avg CTC -->
+        <div
+            class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 flex flex-col items-center text-center print:border-gray-300 print:shadow-none">
+            <div
+                class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mb-4 print:bg-white print:border print:border-purple-500">
+                <span class="text-xl font-black">₹</span>
+            </div>
+            <h5 class="text-gray-500 text-sm font-bold mb-1 uppercase tracking-wider">Average CTC</h5>
+            <p class="text-4xl font-black text-gray-900">{{ avg_ctc }} <span
+                    class="text-base text-gray-500 font-medium">LPA</span></p>
+        </div>
+
+        <!-- Active Drives -->
+        <!-- Active Drives -->
+        <a href="{{ url_for('admin_drives') }}"
+            class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 flex flex-col items-center text-center print:border-gray-300 print:shadow-none hover:shadow-md transition-shadow cursor-pointer relative group">
+            {% if pending_drives_count and pending_drives_count > 0 %}
+            <span class="absolute -top-2 -right-2 flex h-6 w-6">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span
+                    class="relative inline-flex rounded-full h-6 w-6 bg-red-500 text-white text-[10px] items-center justify-center font-bold">{{
+                    pending_drives_count }}</span>
+            </span>
+            {% endif %}
+            <div
+                class="w-12 h-12 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mb-4 print:bg-white print:border print:border-orange-500 group-hover:bg-orange-200 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                    </path>
+                </svg>
+            </div>
+            <h5 class="text-gray-500 text-sm font-bold mb-1 uppercase tracking-wider group-hover:text-gray-700">Active
+                Drives</h5>
+            <p class="text-4xl font-black text-gray-900 group-hover:text-portal-blue">{{ active_drives }}</p>
+        </a>
+    </div>
+
+    <!-- Platform Stats (Secondary, hidden on print to save space usually, or kept as info block) -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 print:hidden">
+        <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-between border border-gray-200">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                        </path>
+                    </svg>
+                </div>
+                <span class="font-bold text-gray-700">Registered<br>Students</span>
+            </div>
+            <span class="text-2xl font-black text-gray-900">{{ student_count }}</span>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-4 flex items-center justify-between border border-gray-200">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+                    <svg class="w-5 h-5 text-portal-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <span class="font-bold text-gray-700">Approved<br>Companies</span>
+            </div>
+            <span class="text-2xl font-black text-gray-900">{{ approved_count }}</span>
+        </div>
+        <a href="{{ url_for('admin_companies') }}"
+            class="bg-orange-50 rounded-xl p-4 flex items-center justify-between border border-orange-100 hover:bg-orange-100 transition-colors group">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+                    <svg class="w-5 h-5 text-portal-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <span class="font-bold text-orange-800">Pending<br>Companies</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-2xl font-black text-orange-600">{{ pending_count }}</span>
+                <svg class="w-5 h-5 text-orange-400 group-hover:translate-x-1 transition-transform" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
+        </a>
+        <a href="{{ url_for('admin_drives') }}"
+            class="bg-blue-50 rounded-xl p-4 flex items-center justify-between border border-blue-100 hover:bg-blue-100 transition-colors group">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+                    <svg class="w-5 h-5 text-portal-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                </div>
+                <span class="font-bold text-portal-blue">Pending<br>Drives</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-2xl font-black text-blue-600">{{ pending_drives_count }}</span>
+                <svg class="w-5 h-5 text-blue-400 group-hover:translate-x-1 transition-transform" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
+        </a>
+    </div>
+
+    <!-- Trend Chart Row -->
+    <div class="mb-8 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 print:shadow-none print:border-gray-400">
+        <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-3 flex items-center gap-2">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+            </svg>
+            12-Month Placement Trend
+        </h3>
+        <div class="w-full relative h-[300px]">
+            <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 print:break-inside-avoid print:gap-4">
+
+        <!-- Salary Dist (Bar) -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 print:shadow-none print:border-gray-400">
+            <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-3 flex items-center gap-2">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                    </path>
+                </svg>
+                Salary Distribution (LPA)
+            </h3>
+            <div class="w-full relative h-[300px]">
+                <canvas id="salaryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Company Dist (Doughnut) -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 print:shadow-none print:border-gray-400">
+            <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-3 flex items-center gap-2">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+                </svg>
+                Recruiting Sectors
+            </h3>
+            <div class="w-full relative h-[300px] flex justify-center">
+                <canvas id="companyChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Charts Row 2 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 print:break-inside-avoid print:gap-4 print:mt-12">
+
+        <!-- Branch Dist (H-Bar) -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 print:shadow-none print:border-gray-400">
+            <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-3 flex items-center gap-2">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                    </path>
+                </svg>
+                Placements by Branch
+            </h3>
+            <div class="w-full relative h-[300px]">
+                <canvas id="branchChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Funnel (Bar) -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 print:shadow-none print:border-gray-400">
+            <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-3 flex items-center gap-2">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                    </path>
+                </svg>
+                Candidate Selection Funnel
+            </h3>
+            <div class="w-full relative h-[300px]">
+                <canvas id="funnelChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Scripts for Chart.js Rendering -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // --- Font & Global Settings ---
+        Chart.defaults.font.family = "'Poppins', sans-serif";
+        Chart.defaults.color = '#6b7280';
+
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1f2937', padding: 12, cornerRadius: 8,
+                    titleFont: { size: 14, weight: 'bold' }, bodyFont: { size: 13 }
+                }
+            }
+        };
+
+        // --- 0. Placement Trend Line Chart ---
+        const trendRaw = {{ trend_dist | tojson | safe
+    }};
+    new Chart(document.getElementById('trendChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: Object.keys(trendRaw),
+            datasets: [{
+                label: 'Selected Students',
+                data: Object.values(trendRaw),
+                borderColor: '#10b981', // portal-green
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderWidth: 3,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#10b981',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            ...commonOptions,
+            plugins: { ...commonOptions.plugins, legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { stepSize: 1 } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // --- 1. Salary Bar Chart ---
+    const salaryRaw = {{ salary_dist | tojson | safe
+    }};
+    new Chart(document.getElementById('salaryChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: Object.keys(salaryRaw),
+            datasets: [{
+                data: Object.values(salaryRaw),
+                backgroundColor: '#1e40af', // portal-blue
+                borderRadius: 4,
+                barPercentage: 0.5
+            }]
+        },
+        options: {
+            ...commonOptions,
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { stepSize: 1 } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // --- 2. Company Sector Doughnut Chart ---
+    const companyRaw = {{ company_dist | tojson | safe }};
+    new Chart(document.getElementById('companyChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(companyRaw),
+            datasets: [{
+                data: Object.values(companyRaw),
+                backgroundColor: ['#1e40af', '#3b82f6', '#93c5fd', '#10b981', '#f59e0b', '#8b5cf6'],
+                hoverOffset: 4,
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right', labels: { usePointStyle: true, padding: 20 } },
+                tooltip: commonOptions.plugins.tooltip
+            },
+            cutout: '65%'
+        }
+    });
+
+    // --- 3. Branch Placement Horizontal Bar Chart ---
+    const branchRaw = {{ branch_dist | tojson | safe }};
+    // Sort logic to put highest on top
+    const branches = Object.keys(branchRaw);
+    const branchVals = Object.values(branchRaw);
+
+    new Chart(document.getElementById('branchChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: branches,
+            datasets: [{
+                data: branchVals,
+                backgroundColor: '#10b981', // green
+                borderRadius: 4,
+                barPercentage: 0.6
+            }]
+        },
+        options: {
+            ...commonOptions,
+            indexAxis: 'y', // Makes it horizontal
+            scales: {
+                x: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { stepSize: 1 } },
+                y: { grid: { display: false } }
+            }
+        }
+    });
+
+    // --- 4. Application Funnel Bar Chart ---
+    const funnelRaw = {{ funnel_dist | tojson | safe }};
+    const capLabels = Object.keys(funnelRaw).map(k => k.charAt(0).toUpperCase() + k.slice(1));
+
+    new Chart(document.getElementById('funnelChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: capLabels,
+            datasets: [{
+                data: Object.values(funnelRaw),
+                backgroundColor: ['#9ca3af', '#60a5fa', '#10b981', '#ef4444'], // grey, blue, green, red
+                borderRadius: 4,
+                barPercentage: 0.7
+            }]
+        },
+        options: {
+            ...commonOptions,
+            scales: {
+                y: { beginAtZero: true, grid: { display: false } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
